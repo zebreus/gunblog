@@ -1,9 +1,88 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import type { GetStaticProps, NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import { memo, useEffect, useState } from "react";
+import { getGun, useGun } from "../hooks/gun/useGun";
+import { getGunItem, setGunItem, useGunItem } from "../hooks/gun/useGunItem";
+import { withExportCache, withImportCache } from "../util/gunCache";
+
+export const getStaticProps: GetStaticProps = async () => {
+  const gun = getGun();
+  setGunItem("alpha", 2);
+  setGunItem("beta", 20);
+  await getGunItem("alpha");
+  await getGunItem("beta");
+
+  const props = {
+    props: withExportCache({}),
+    revalidate: 30,
+  };
+
+  return props;
+};
+
+const Sub = () => {
+  const { item: alpha } = useGunItem<number>("alpha");
+  const { item: beta } = useGunItem<number>("beta");
+  useGunItem<number>("beta");
+  return (
+    <div>
+      <h3>Alpha</h3>
+      <p>
+        <span>{alpha}</span>
+      </p>
+      <h3>Beta</h3>
+      <p>
+        <span>{beta}</span>
+      </p>
+    </div>
+  );
+};
+
+const BetaRenderMeasurer = memo(() => {
+  console.log("Render beta");
+  const { item: beta } = useGunItem<number>("beta");
+  return (
+    <div>
+      <h3>Beta</h3>
+      <p>
+        <span>{beta}</span>
+      </p>
+    </div>
+  );
+});
+
+BetaRenderMeasurer.displayName = "BetaRenderMeasurer";
+
+const AlphaRenderMeasurer = memo(() => {
+  console.log("Render alpha");
+  const { item: alpha } = useGunItem<number>("alpha");
+  return (
+    <div>
+      <h3>Alpha</h3>
+      <p>
+        <span>{alpha}</span>
+      </p>
+    </div>
+  );
+});
+
+AlphaRenderMeasurer.displayName = "AlphaRenderMeasurer";
 
 const Home: NextPage = () => {
+  const [field, setField] = useState<string>("alpha");
+  const { item } = useGunItem<number>(field);
+
+  const gun = useGun();
+  const actionOne = () => {
+    setField((field) => (field === "alpha" ? "beta" : "alpha"));
+  };
+
+  const actionTwo = () => {
+    const res = setGunItem(field, (item || 0) + 1);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -17,40 +96,12 @@ const Home: NextPage = () => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <button onClick={actionOne}>action one</button>
+        <button onClick={actionTwo}>action two</button>
+        <h2>item</h2>
+        <code>{JSON.stringify(item)}</code>
+        <AlphaRenderMeasurer />
+        <BetaRenderMeasurer />
       </main>
 
       <footer className={styles.footer}>
@@ -59,14 +110,14 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default withImportCache(Home);
