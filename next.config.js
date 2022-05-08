@@ -1,5 +1,3 @@
-const WebpackWatchRunPlugin = require("./weppackWatch");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
