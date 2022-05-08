@@ -21,7 +21,11 @@ declare global {
     }
 }
 
-const defaultGunOptions = { radisk: false, localStorage: false, peers: ["http://localhost:8765/gun"] };
+const defaultGunOptions = {
+    radisk: true, localStorage: true, peers: [
+        'http://gun-matrix.herokuapp.com/gun',
+    ]
+};
 
 /** Use the gun object configured with the given options. If it does not exists, one will be created. */
 export const useGun = <Type extends Record<string, GunSchema> = any>(options: GunOptions = defaultGunOptions) => {

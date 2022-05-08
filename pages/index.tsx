@@ -8,7 +8,7 @@ import { getGunItem, setGunItem, useGunItem } from "../hooks/gun/useGunItem";
 import { withExportCache, withImportCache } from "../util/gunCache";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const gun = getGun();
+  const gun = getGun().get("guncmsblogthingRoot");
   setGunItem("alpha", 2);
   setGunItem("beta", 20);
   await getGunItem("alpha");
@@ -74,7 +74,7 @@ const Home: NextPage = () => {
   const [field, setField] = useState<string>("alpha");
   const { item } = useGunItem<number>(field);
 
-  const gun = useGun();
+  const gun = useGun().get("guncmsblogthingRoot");
   const actionOne = () => {
     setField((field) => (field === "alpha" ? "beta" : "alpha"));
   };

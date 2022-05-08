@@ -6,7 +6,7 @@ import { getGun, useGun } from "./useGun";
 export const useGunElements = <T>(chain?: IGunChain<any>) => {
     const currentListener = useRef(0)
 
-    const [value, setValue] = useState<Record<string, T | undefined>>(() => (chain && getCachedGunElements<T>(chain)));
+    const [value, setValue] = useState<Record<string, T | undefined> | undefined>(() => (chain && getCachedGunElements<T>(chain)));
 
     useEffect(() => {
 
@@ -68,6 +68,7 @@ export const useGunElement = <T>(chain?: IGunChain<any>) => {
 
     return value;
 }
+
 
 export const getGunElement = async <T>(chain: IGunChain<any>) => {
     const item = await new Promise<T>((resolve, reject) => {

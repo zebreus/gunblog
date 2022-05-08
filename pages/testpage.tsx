@@ -2,7 +2,7 @@ import { DemoPage } from "../components/DemoPage";
 import { useGun } from "../hooks/gun/useGun";
 
 const Testpage = () => {
-  const gun = useGun();
+  const gun = useGun().get("guncmsblogthingRoot");
   return (
     <div>
       <h2>Headline</h2>

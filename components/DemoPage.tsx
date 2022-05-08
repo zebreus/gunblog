@@ -22,6 +22,7 @@ export const DemoPage = ({ root }: PageProps) => {
   const actionOne = () => {
     setField((field) => (field === "alpha" ? "beta" : "alpha"));
   };
+  const gun = useGun().get("guncmsblogthingRoot");
   return (
     <div>
       {title ? (
@@ -53,9 +54,17 @@ export const DemoPage = ({ root }: PageProps) => {
       <button
         onClick={() => {
           const randomId = Math.floor(Math.random() * subPageColors.length);
+          const pageId = (Math.random() + 1).toString(36).substring(7);
+          const newPage = {
+            type: "page",
+            title: "Neue Unterseite",
+            id: pageId,
+          };
+          console.log("new page", newPage);
+          gun.get("pages").get(pageId).set(newPage);
           fields.set({
             type: "subpage",
-            target: { type: "page", title: "Neue Unterseite" },
+            target: newPage,
             color: subPageColors[randomId],
             textColor: subPageTextColors[randomId],
           });

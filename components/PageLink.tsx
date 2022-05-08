@@ -14,8 +14,15 @@ interface PageLinkProps {
 export const PageLink = ({ root }: PageLinkProps) => {
   const targetField = root.get("target");
   const titleField = root.get("title");
+  const targetTitleField = targetField.get("title");
+  const targetIdField = targetField.get("id");
+  const thisIdField = root.back().back().get("id");
 
   const title = (useGunElement(titleField) as string) || "No text yet";
+  const targetTitle =
+    (useGunElement(targetTitleField) as string) || "GUN GUN GUN";
+  const targetId = (useGunElement(targetIdField) as string) || "a";
+  const thisId = (useGunElement(thisIdField) as string) || "a";
 
   const color = (useGunElement(root.get("color")) as string) || "white";
   const textColor = (useGunElement(root.get("textColor")) as string) || "black";
@@ -64,6 +71,7 @@ export const PageLink = ({ root }: PageLinkProps) => {
 
           animation-name: border;
           animation-duration: 0.4s;
+          z-index: 2;
         }
         .subpage .content {
           padding: 1rem;
@@ -84,10 +92,27 @@ export const PageLink = ({ root }: PageLinkProps) => {
         }
       `}</style>
 
-      <button onClick={() => setOpen(true)}>Open subpage</button>
+      <button
+        onClick={() => {
+          setOpen(true);
+          window.history.replaceState({}, targetTitle, `/fromgun/${targetId}`);
+        }}
+      >
+        Open subpage
+      </button>
       {open ? (
         <div className="subpage">
-          <div className="background" onClick={() => setOpen(false)} />
+          <div
+            className="background"
+            onClick={() => {
+              setOpen(false);
+              window.history.replaceState(
+                {},
+                targetTitle,
+                `/fromgun/${thisId}`
+              );
+            }}
+          />
           <div className="content">
             <DemoPage root={targetField} />
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getGun, useGun } from "./useGun";
 
 export const useGunItem = <T>(id: string) => {
-    const gun = useGun()
+    const gun = useGun().get("guncmsblogthingRoot")
     const currentListener = useRef(0)
 
     const [value, setValue] = useState<T | undefined>(() => getCachedGunItem<T>(id));
@@ -37,7 +37,7 @@ export const useGunItem = <T>(id: string) => {
 }
 
 export const getGunItem = async <T>(id: string) => {
-    const gun = getGun();
+    const gun = getGun().get("guncmsblogthingRoot");
     const target = gun.get("root").get(id);
     const item = await new Promise<T>((resolve, reject) => {
         target.once((data, key) => {
@@ -50,7 +50,7 @@ export const getGunItem = async <T>(id: string) => {
 }
 
 export const getCachedGunItem = <T>(id: string) => {
-    const gun = getGun();
+    const gun = getGun().get("guncmsblogthingRoot");
     const target = gun.get("root").get(id);
     let item;
 
@@ -65,7 +65,7 @@ export const getCachedGunItem = <T>(id: string) => {
 }
 
 export const setGunItem = async <T>(id: string, data: T) => {
-    const gun = getGun();
+    const gun = getGun().get("guncmsblogthingRoot");
     const target = gun?.get("root").get(id);
     await new Promise<void>((resolve, reject) => {
         target.put(data, (ack: GunMessagePut & { err?: string }) => {
