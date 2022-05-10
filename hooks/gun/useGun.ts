@@ -23,7 +23,7 @@ declare global {
 
 const defaultGunOptions = {
     radisk: true, localStorage: true, peers: [
-        'http://gun-matrix.herokuapp.com/gun',
+        'https://gun-matrix.herokuapp.com/gun',
     ]
 };
 
